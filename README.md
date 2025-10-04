@@ -56,8 +56,8 @@ The server will start on `https://0.0.0.0:3443`
    - **←** (Left Arrow) = Wrong answer, try again (shows "NO!")
    - **→** (Right Arrow) = Correct answer (shows answer and adds points)
    - **↓** (Down Arrow) = Wrong answer, time's up (moves to next question)
-6. Press **R** to reveal the Albania surprise at the end!
-7. Press **BACKSPACE** to reset the game
+6. The Albania reveal happens automatically after all questions!
+7. Press **R** to reset the game and play again
 
 ### On Player Device:
 
