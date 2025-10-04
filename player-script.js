@@ -3,6 +3,7 @@ let score = 0;
 let timeLeft = 7.5;
 let timerInterval = null;
 const MAX_TIME = 7.5;
+let currentMaxTime = 7.5; // Can be overridden per question
 
 // Store original question text to restore after wrong answer
 let originalQuestionText = '';
@@ -441,7 +442,7 @@ function launchFireworks() {
 }
 
 function updateTimerBar() {
-    const percentage = (timeLeft / MAX_TIME) * 100;
+    const percentage = (timeLeft / currentMaxTime) * 100;
     const timerFill = document.getElementById('timerFill');
     timerFill.style.width = percentage + '%';
 
@@ -458,7 +459,7 @@ function updateTimerBar() {
 
 function updateTimerOverlay() {
     const overlay = document.getElementById('timerOverlay');
-    const percentage = (timeLeft / MAX_TIME);
+    const percentage = (timeLeft / currentMaxTime);
     overlay.style.transform = `scaleY(${1 - percentage})`;
 
     if (timeLeft <= 2.5) {
@@ -469,7 +470,7 @@ function updateTimerOverlay() {
 }
 
 function updatePointsDisplay() {
-    const speedBonus = Math.floor((timeLeft / MAX_TIME) * 50);
+    const speedBonus = Math.floor((timeLeft / currentMaxTime) * 50);
     const points = 50 + speedBonus;
     const pointsDisplay = document.getElementById('pointsDisplay');
     pointsDisplay.textContent = `+${points} pts`;
@@ -1148,6 +1149,9 @@ function handleGameMessage(data) {
             document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
             document.getElementById('totalQuestions').textContent = data.total;
 
+            // Set custom max time if provided, otherwise use default
+            currentMaxTime = data.maxTime || MAX_TIME;
+
             // Clear any pending wrong answer restore timeout
             if (wrongAnswerTimeout) {
                 clearTimeout(wrongAnswerTimeout);
@@ -1177,7 +1181,7 @@ function handleGameMessage(data) {
             }
 
             // Don't start timer yet - wait for mic to be ready
-            timeLeft = MAX_TIME;
+            timeLeft = currentMaxTime;
             updateTimerBar();
             updateTimerOverlay();
             updatePointsDisplay();
@@ -1325,7 +1329,7 @@ function handleGameMessage(data) {
 
                 // No TTS for correct answers
 
-                const speedBonus = Math.floor((data.timeLeft / MAX_TIME) * 50);
+                const speedBonus = Math.floor((data.timeLeft / currentMaxTime) * 50);
                 const points = 50 + speedBonus;
                 score += points;
                 updateScore();

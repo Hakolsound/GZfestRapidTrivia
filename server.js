@@ -64,7 +64,13 @@ const requestHandler = (req, res) => {
                 res.end('Server Error: ' + error.code, 'utf-8');
             }
         } else {
-            res.writeHead(200, { 'Content-Type': contentType });
+            // Prevent caching during development
+            res.writeHead(200, {
+                'Content-Type': contentType,
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            });
             res.end(content, 'utf-8');
         }
     });

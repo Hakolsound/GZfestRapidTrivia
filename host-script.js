@@ -179,11 +179,13 @@ const questions = [
     },
     {
         question: "Which festival is being celebrated globally during October?",
-        correct: "GeeZey-Fest"
+        correct: "GeeZey-Fest",
+        duration: 15
     },
     {
         question: "Where is Fufu going tomorrow morning?",
-        correct: "Albania"
+        correct: "Albania",
+        duration: 15
     }
 ];
 
@@ -192,6 +194,7 @@ let gameActive = false;
 let timerInterval = null;
 let timeLeft = 7.5;
 const MAX_TIME = 7.5;
+let currentMaxTime = 7.5; // Can be overridden per question
 
 // WebSocket connection for cross-device communication
 let ws = null;
@@ -390,6 +393,10 @@ function loadQuestion() {
 
     const question = questions[currentQuestionIndex];
 
+    // Set question duration (use custom duration if specified, otherwise default)
+    currentMaxTime = question.duration || MAX_TIME;
+    timeLeft = currentMaxTime;
+
     // Show correct answer in page title instead of "TRIVIA HOST CONTROL v2.0"
     const titleEl = document.getElementById('pageTitle');
     titleEl.textContent = `ANSWER: ${question.correct}`;
@@ -406,12 +413,13 @@ function loadQuestion() {
     document.getElementById('mobileCorrectBtn').disabled = false;
     document.getElementById('mobileWrongBtn').disabled = false;
 
-    // Tell player to show question
+    // Tell player to show question with custom max time
     sendMessage({
         type: 'show_question',
         questionIndex: currentQuestionIndex,
         question: question.question,
-        total: questions.length
+        total: questions.length,
+        maxTime: currentMaxTime
     });
 
     // Wait for mic_ready message from player before starting timer
@@ -419,7 +427,7 @@ function loadQuestion() {
 }
 
 function startTimer() {
-    timeLeft = MAX_TIME;
+    timeLeft = currentMaxTime; // Use the current question's max time
     updateTimerDisplay();
 
     clearInterval(timerInterval);
