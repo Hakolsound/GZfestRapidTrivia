@@ -1,0 +1,18 @@
+{
+  "name": "rapid-trivia",
+  "version": "1.0.0",
+  "description": "Birthday surprise trivia game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "trivia",
+    "game"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rapid Trivia">
+    <title>Rapid Trivia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Feedback Overlay -->
+    <div id="feedbackOverlay" class="feedback-overlay hidden">
+        <div id="feedbackMessage" class="feedback-message"></div>
+    </div>
+
+    <!-- Fireworks Container -->
+    <div id="fireworksContainer" class="fireworks-container"></div>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen">
+            <h1>⚡ Rapid Trivia ⚡</h1>
+            <div class="subtitle">Answer as fast as you can!</div>
+            <div class="subtitle">⚡ 7.5 seconds per question!</div>
+            <button class="start-btn" onclick="startGame()">Start</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen hidden">
+            <div class="timer-container">
+                <div id="timerOverlay" class="timer-overlay"></div>
+            </div>
+
+            <div class="score-display">Score: <span id="score">0</span> 🎯</div>
+            <div class="points-display" id="pointsDisplay">+100</div>
+            <div class="timer-bar">
+                <div id="timerFill" class="timer-fill"></div>
+            </div>
+            <div class="question-number">
+                Question <span id="currentQuestion">1</span> of <span id="totalQuestions">7</span>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+        </div>
+
+        <!-- Reveal Screen -->
+        <div id="revealScreen" class="screen hidden">
+            <div class="reveal-screen">
+                <h1>🎊 Congratulations! 🎊</h1>
+                <div class="final-score">Your Score: <span id="finalScore">0</span></div>
+                <div class="celebration">🎂🎈🎁</div>
+                <div class="message">Happy 36th Birthday!</div>
+                <div class="message">This Sunday, we're going to...</div>
+                <div class="destination-reveal" style="background: linear-gradient(135deg, #e41e20 0%, #e41e20 50%, #000000 50%, #000000 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 30px rgba(228, 30, 32, 0.5);">🇦🇱 ALBANIA! 🇦🇱</div>
+                <div class="message">Get ready for an amazing adventure! ✈️</div>
+                <button class="restart-btn" onclick="restartGame()">Play Again!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <style>
+        /* 16:9 Desktop optimization for index.html */
+        @media (min-width: 1024px) and (min-aspect-ratio: 16/9) {
+            body {
+                padding: 40px 60px;
+            }
+            .container {
+                max-width: 900px;
+            }
+            .screen {
+                padding: 50px 60px;
+            }
+        }
+    </style>
+</body>
+</html>

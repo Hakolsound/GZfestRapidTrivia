@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rapid Trivia">
+    <title>Rapid Trivia</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .mic-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: clamp(1.2em, 5vw, 1.5em);
+            color: #667eea;
+            animation: pulse 2s infinite;
+        }
+
+        /* 16:9 Desktop */
+        @media (min-width: 1024px) and (min-aspect-ratio: 16/9) {
+            .answer-feedback {
+                font-size: clamp(2.5em, 5vw, 3.5em);
+            }
+            .audio-sphere {
+                width: 20px;
+                height: 20px;
+            }
+            .voice-monitor {
+                min-height: 500px;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .answer-feedback {
+            font-size: clamp(2em, 8vw, 3em);
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Voice Monitor Styles */
+        .voice-monitor {
+            position: relative;
+            margin: 20px 0;
+            text-align: center;
+            min-height: clamp(300px, 60vh, 500px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mic-icon-large {
+            display: none; /* Hidden for clean professional look */
+        }
+
+        .audio-visualizer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0.9;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            z-index: 9999;
+        }
+
+        .audio-sphere {
+            position: absolute;
+            width: clamp(16px, 4vw, 32px);
+            height: clamp(16px, 4vw, 32px);
+            background: radial-gradient(circle at 30% 30%, rgba(158, 126, 234, 1), rgba(102, 126, 234, 0.9));
+            border-radius: 50%;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: center;
+            transition: all 0.04s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(158, 126, 234, 0.6);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.9), inset 0 0 10px rgba(255, 255, 255, 0.3);
+            will-change: transform, opacity;
+        }
+
+        .listening-status {
+            font-size: clamp(0.7em, 2vw, 0.9em);
+            color: #667eea;
+            font-weight: 500;
+            animation: statusPulse 1.5s ease-in-out infinite;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+            width: auto;
+            max-width: 90%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .voice-monitor.active .mic-icon-large {
+            animation: micActive 0.5s ease-in-out infinite;
+        }
+
+        @keyframes micActive {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .voice-monitor.active .audio-visualizer {
+            animation: visualizerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes visualizerPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .waiting-screen, .ready-screen {
+            text-align: center;
+        }
+
+        .waiting-screen h2, .ready-screen h2 {
+            color: #667eea;
+            font-size: clamp(1.5em, 6vw, 2em);
+            margin-bottom: 20px;
+        }
+
+        .ready-screen {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-container {
+            width: 100%;
+            max-width: 400px;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            margin: 30px auto;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 15px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-size: clamp(1.1em, 4vw, 1.3em);
+            margin-top: 20px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Feedback Overlay -->
+    <div id="feedbackOverlay" class="feedback-overlay hidden">
+        <div id="feedbackMessage" class="feedback-message"></div>
+    </div>
+
+    <!-- Fireworks Container -->
+    <div id="fireworksContainer" class="fireworks-container"></div>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen">
+            <h1>🎤 Voice Trivia 🎤</h1>
+            <div class="subtitle">Answer questions using your voice!</div>
+            <div class="subtitle">🎙️ Speak your answers clearly!</div>
+            <div class="waiting-screen" id="waitingScreen">
+                <h2 id="loadingTitle">Initializing Voice Recognition...</h2>
+
+                <div class="loading-spinner"></div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                </div>
+
+                <div class="loading-text" id="loadingText">Starting up system...</div>
+
+                <div class="ready-screen hidden" id="audioUnlockPrompt" style="margin-top: 40px;">
+                    <h2 style="color: #ff9800; margin-bottom: 20px; font-size: clamp(2em, 8vw, 2.5em);">⚠️ Audio Setup Required</h2>
+                    <div style="font-size: clamp(1.3em, 5vw, 1.8em); font-weight: bold; color: #667eea; margin-bottom: 25px;">
+                        Tap the button below to enable<br>voice recognition and audio
+                    </div>
+                    <button id="unlockAudioBtn" style="
+                        font-size: clamp(1.5em, 6vw, 2em);
+                        padding: 20px 40px;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border: none;
+                        border-radius: 15px;
+                        font-weight: bold;
+                        cursor: pointer;
+                        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                        animation: pulse 2s infinite;
+                    ">
+                        🔊 Enable Audio
+                    </button>
+                </div>
+
+                <div class="ready-screen hidden" id="readyPrompt" style="margin-top: 40px;">
+                    <h2 style="color: #4caf50; margin-bottom: 20px; font-size: clamp(2em, 8vw, 2.5em);">✓ Ready!</h2>
+                    <div style="font-size: clamp(1.5em, 6vw, 2em); font-weight: bold; color: #667eea; margin-bottom: 15px;">
+                        To start, say:
+                    </div>
+                    <div style="font-size: clamp(2.5em, 10vw, 4em); font-weight: bold; color: #764ba2; animation: pulse 2s infinite;">
+                        "Let's Go!"
+                    </div>
+                    <div class="mic-indicator" style="margin-top: 25px; font-size: clamp(2em, 8vw, 3em);">
+                        🎙️
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen hidden">
+            <div class="timer-container">
+                <div id="timerOverlay" class="timer-overlay"></div>
+            </div>
+
+            <div class="score-display">Score: <span id="score">0</span> 🎯</div>
+            <div class="points-display" id="pointsDisplay">+100</div>
+            <div class="timer-bar">
+                <div id="timerFill" class="timer-fill"></div>
+            </div>
+            <div class="question-number">
+                Question <span id="currentQuestion">1</span> of <span id="totalQuestions">7</span>
+            </div>
+            <div class="question" id="question"></div>
+
+            <!-- Voice Input Monitor -->
+            <div class="voice-monitor">
+                <div class="mic-icon-large" id="micIcon">🎙️</div>
+                <div class="audio-visualizer" id="audioVisualizer">
+                    <!-- Bars will be generated by JavaScript -->
+                </div>
+                <div class="listening-status" id="listeningStatus">Listening for your answer...</div>
+            </div>
+
+            <div class="answer-feedback" id="answerFeedback"></div>
+        </div>
+
+        <!-- Reveal Screen -->
+        <div id="revealScreen" class="screen hidden">
+            <div class="reveal-screen">
+                <h1 id="revealTitle">🎊 Congratulations! 🎊</h1>
+                <div class="final-score">Your Score: <span id="finalScore">0</span></div>
+                <div class="celebration" id="celebrationEmojis">🎂🎈🎁</div>
+                <div class="message">Let the GZfest Begin!</div>
+                <div class="message">We're going to...</div>
+                <div class="destination-reveal" id="destinationReveal" style="background: linear-gradient(135deg, #e41e20 0%, #e41e20 50%, #000000 50%, #000000 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 30px rgba(228, 30, 32, 0.5);">🇦🇱 ALBANIA! 🇦🇱</div>
+                <div class="message" id="adventureMessage">Get ready for an amazing adventure! ✈️</div>
+                <div class="message" id="bonusMessage" style="font-size: 2em; margin-top: 30px; animation: pulse 2s infinite;">🌟 You're Amazing! 🌟</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="player-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Trivia Host">
+    <title>Trivia Host Control</title>
+    <link rel="stylesheet" href="host-style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="screen">
+            <h1 id="pageTitle">TRIVIA HOST CONTROL v2.0</h1>
+
+            <!-- Player Access Section - Collapsible -->
+            <div class="player-access" id="playerAccess">
+                <div class="access-header" onclick="togglePlayerAccess()" style="cursor: pointer; user-select: none;">
+                    <span id="accessToggleIcon">▼</span> PLAYER ACCESS
+                </div>
+                <div id="playerAccessContent" style="display: none;">
+                    <div class="qr-container">
+                        <img id="qrCode" src="" alt="QR Code" style="display: none; width: 150px; height: 150px; border: 2px solid #4a4a4a; background: white; padding: 10px;">
+                    </div>
+                    <div class="player-url" id="playerUrl">Loading URL...</div>
+                    <button class="access-btn" id="openPlayerBtn" onclick="openPlayerPage()">OPEN PLAYER PAGE</button>
+                    <button class="access-btn" id="copyUrlBtn" onclick="copyPlayerUrl()">COPY URL</button>
+                </div>
+            </div>
+
+            <div class="status">
+                <div class="status-item">QUESTION: <span id="questionNum">-</span></div>
+                <div class="status-item">TIMER: <span id="timerDisplay">-</span>s</div>
+                <div class="status-item">STATUS: <span id="statusDisplay">IDLE</span></div>
+            </div>
+
+            <div class="question-display" id="questionDisplay">
+                Ready to start...
+            </div>
+
+            <div class="control-buttons">
+                <div class="control-section">
+                    <div class="control-label">[INITIALIZATION]</div>
+                    <button class="start-btn" id="readyBtn" onclick="setReady()">START_SEQUENCE</button>
+                    <span class="keyboard-hint">[ENTER]</span>
+                </div>
+
+                <div class="control-section">
+                    <div class="control-label">[GAME START]</div>
+                    <button class="start-btn" id="startBtn" onclick="startGame()" disabled>BEGIN_GAME</button>
+                    <span class="keyboard-hint">[SPACE]</span>
+                </div>
+
+                <div class="control-section">
+                    <div class="control-label">[ANSWER EVALUATION]</div>
+                    <button class="correct-btn" id="correctBtn" onclick="markCorrect()" disabled>CORRECT</button>
+                    <span class="keyboard-hint">[→] or [C]</span>
+                    <button class="wrong-btn" id="wrongBtn" onclick="markWrong()" disabled>WRONG</button>
+                    <span class="keyboard-hint">[←] or [X]</span>
+                </div>
+
+                <div class="control-section">
+                    <div class="control-label">[RESET]</div>
+                    <button class="wrong-btn" id="resetBtn" onclick="resetGame()">RESET_GAME</button>
+                    <span class="keyboard-hint">[R]</span>
+                </div>
+            </div>
+
+            <div class="answer-display" id="answerDisplay"></div>
+
+            <div class="cli-line" style="margin-top: 20px; opacity: 0.5;">
+                [LOG] System initialized. Awaiting commands...
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Quick Access Buttons -->
+    <div class="mobile-controls" style="position: fixed; bottom: 0; left: 0; right: 0; width: 100%; display: flex; background: #0a0a0a; border-top: 3px solid #4a4a4a; padding: 0; z-index: 10000; margin: 0;">
+        <button class="mobile-btn mobile-start" id="mobileStartBtn" onclick="handleMobileStart()" style="flex: 1; padding: 20px; font-size: 3.5em; font-weight: bold; font-family: 'Courier New', monospace; border: none; border-right: 3px solid #4a4a4a; background: #000000; color: #a8a8a8; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+            INIT
+        </button>
+        <button class="mobile-btn mobile-wrong" id="mobileWrongBtn" onclick="markWrong()" disabled style="flex: 1; padding: 20px; font-size: 5em; font-weight: bold; font-family: 'Courier New', monospace; border: none; border-right: 3px solid #4a4a4a; background: #000000; color: #f44336; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+            ✗
+        </button>
+        <button class="mobile-btn mobile-correct" id="mobileCorrectBtn" onclick="markCorrect()" disabled style="flex: 1; padding: 20px; font-size: 5em; font-weight: bold; font-family: 'Courier New', monospace; border: none; background: #000000; color: #4caf50; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+            ✓
+        </button>
+    </div>
+
+    <script src="host-script.js"></script>
+</body>
+</html>
